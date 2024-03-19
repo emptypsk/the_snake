@@ -1,4 +1,5 @@
 from random import choice, randint
+import time
 import pygame
 
 # Инициализация PyGame:
@@ -20,8 +21,19 @@ RIGHT = (1, 0)
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
 BORDER_COLOR = (93, 216, 228)
 APPLE_COLOR = (255, 0, 0)
-SNAKE_COLOR = (0, 255, 0)
-
+SNAKE_COLOR = (153, 153, 0)
+# Словарь цветов змейки в зависимости от очков
+SNAKE_COLOR_DICT = {5: (204, 204, 0),
+                    10: (255, 255, 0),
+                    15: (255, 255, 51),
+                    20: (255, 255, 102),
+                    25: (255, 255, 153),
+                    30: (255, 255, 204),
+                    35: (128, 255, 0),
+                    40: (0, 255, 0),
+                    45: (0, 255, 255),
+                    50: (255, 0, 255)
+                    }
 # Скорость движения змейки:
 SPEED = 5
 
@@ -100,12 +112,20 @@ class Snake(GameObject):
 
     def reset(self):
         """Сбрасывает змейку в начальное состояние."""
-        global SPEED
+        global SPEED, BOARD_BACKGROUND_COLOR
         self.length = 1
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.last = None
         SPEED = 5
+        # При поражении делаем паузу, красим экран и возвращаем прежний вид
+        BOARD_BACKGROUND_COLOR = (255, 0, 0)
+        screen.fill(BOARD_BACKGROUND_COLOR)
+        pygame.display.update()
+        time.sleep(2)
+        BOARD_BACKGROUND_COLOR = (0, 0, 0)
+        screen.fill(BOARD_BACKGROUND_COLOR)
+        pygame.display.update()
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
@@ -119,7 +139,12 @@ class Snake(GameObject):
         """Отрисовывает змейку на игровой поверхности."""
         for position in self.positions:
             rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
-            pygame.draw.rect(screen, self.body_color, rect)
+            if self.length < 5:
+                pygame.draw.rect(screen, self.body_color, rect)
+            else:
+                for k, v in SNAKE_COLOR_DICT.items():
+                    if int(self.length) >= k:
+                        pygame.draw.rect(screen, v, rect)
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
@@ -182,6 +207,7 @@ def main():
 
         # Обновление экрана
         pygame.display.update()
+        # Ведение счета на заголовке окна
         pygame.display.set_caption(
             f'Змейка. Текущий счёт ={snake.length}')
         clock.tick(SPEED)
