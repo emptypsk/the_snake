@@ -1,6 +1,6 @@
 from random import choice, randint
 import time
-"""Версия 1.0.1 раскоментировать по желанию."""
+"""Версия 1.0.1 раскомментировать по желанию."""
 # import os
 # import requests
 import pygame
@@ -128,7 +128,7 @@ class Snake(GameObject):
         BOARD_BACKGROUND_COLOR = (255, 0, 0)
         screen.fill(BOARD_BACKGROUND_COLOR)
         pygame.display.update()
-        """Версия 1.0.1 раскоментировать по желанию."""
+        """Версия 1.0.1 раскомментировать по желанию."""
         # pygame.mixer.music.load('game_over.mp3')
         # pygame.mixer.music.play(0)
         time.sleep(4)
@@ -222,7 +222,7 @@ def main():
         clock.tick(SPEED)
 
 
-"""Версия 1.0.1 раскоментировать по желанию."""
+"""Версия 1.0.1 раскомментировать по желанию."""
 # def download_audio(url, save_path):
 #     """Загрузка дополнительного аудио файла"""
 #     # Получаем имя файла из URL
