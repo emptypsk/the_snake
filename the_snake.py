@@ -1,5 +1,8 @@
 from random import choice, randint
 import time
+"""Версия 1.0.1 раскоментировать по желанию."""
+# import os
+# import requests
 import pygame
 
 # Инициализация PyGame:
@@ -17,10 +20,13 @@ DOWN = (0, 1)
 LEFT = (-1, 0)
 RIGHT = (1, 0)
 
-# Цвета:
+# Цвет поля - чёрный
 BOARD_BACKGROUND_COLOR = (0, 0, 0)
+# Цвет границы ячейки
 BORDER_COLOR = (93, 216, 228)
+# Цвет яблока
 APPLE_COLOR = (255, 0, 0)
+# Стартовый цвет змейки
 SNAKE_COLOR = (153, 153, 0)
 # Словарь цветов змейки в зависимости от очков
 SNAKE_COLOR_DICT = {5: (204, 204, 0),
@@ -122,7 +128,10 @@ class Snake(GameObject):
         BOARD_BACKGROUND_COLOR = (255, 0, 0)
         screen.fill(BOARD_BACKGROUND_COLOR)
         pygame.display.update()
-        time.sleep(2)
+        """Версия 1.0.1 раскоментировать по желанию."""
+        # pygame.mixer.music.load('game_over.mp3')
+        # pygame.mixer.music.play(0)
+        time.sleep(4)
         BOARD_BACKGROUND_COLOR = (0, 0, 0)
         screen.fill(BOARD_BACKGROUND_COLOR)
         pygame.display.update()
@@ -207,11 +216,42 @@ def main():
 
         # Обновление экрана
         pygame.display.update()
-        # Ведение счета на заголовке окна
+        # Ведение счёта на заголовке окна
         pygame.display.set_caption(
             f'Змейка. Текущий счёт ={snake.length}')
         clock.tick(SPEED)
 
 
-if __name__ == "__main__":
+"""Версия 1.0.1 раскоментировать по желанию."""
+# def download_audio(url, save_path):
+#     """Загрузка дополнительного аудио файла"""
+#     # Получаем имя файла из URL
+#     file_name = 'game_over.mp3'
+#     # Полный путь к файлу для сохранения
+#     file_path = os.path.join(save_path, file_name)
+
+#     # Запрашиваем файл по URL
+#     response = requests.get(url)
+
+#     # Проверяем успешность запроса
+#     if response.status_code == 200:
+#         # Открываем файл для записи в бинарном режиме и
+#         # записываем полученные данные
+#         with open(file_path, 'wb') as f:
+#             f.write(response.content)
+#         print(f'Аудиофайл успешно скачан и сохранен как {file_path}')
+#     else:
+#         print('Ошибка при загрузке аудиофайла')
+
+
+# # URL аудиофайла для скачивания
+# url = 'https://www.myinstants.com/media/sounds/'
+# filename = 'directed-by-robert-b_voI2Z4T.mp3'
+# url = url + filename
+# # Получаем текущую рабочую директорию
+# current_directory = os.getcwd()
+# # Вызываем функцию для скачивания аудиофайла
+# download_audio(url, current_directory)
+
+if __name__ == '__main__':
     main()
