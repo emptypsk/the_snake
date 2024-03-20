@@ -22,6 +22,12 @@
 Змейка может проходить сквозь стену и появляться с противоположной стороны поля.
 Если змейка столкнётся сама с собой — игра заканчивается.
 
+##  Правила игры v_1.1
+Змейка состоит из сегментов.
+Змейка движется в одном из четырёх направлений — вверх, вниз, влево или вправо. Игрок управляет направлением движения, но змейка не может остановиться или двигаться назад.
+Каждый раз, когда змейка съедает яблоко, она увеличивается в длину на один сегмент.
+Змейка не может проходить сквозь стены. Если змейка столкнётся сама с собой или со стеной(стены выделены дополнительным цветом) — игра заканчивается. При достижении определённого количества очков скорость движения змейки увеличивается, на поле появляются 'Анти-Яблоки', поглотив которые змейка уменьшается в размере и вы теряете часть очков. В заголовке окна указаны ваши текущие очки, скорость змейки, максимальные очки, набранные в текущей игровой сессии. При наборе определённого количества очков змейка меняет свой цвет.
+
 ## Управление
 Управление змейкой осуществляется с помощью стрелок на клавиатуре:
 
@@ -60,6 +66,12 @@ The snake moves in one of four directions — up, down, left, or right. The play
 Every time the snake eats an apple, it grows in length by one segment.
 The snake can pass through walls and reappear on the opposite side of the field.
 If the snake collides with itself, the game ends.
+
+## Game Rules v_1.1
+The snake consists of segments.
+The snake moves in one of four directions — up, down, left, or right. The player controls the direction of movement, but the snake cannot stop or move backward.
+Each time the snake eats an apple, it increases in length by one segment.
+The snake cannot pass through walls. If the snake collides with itself or with a wall (walls are highlighted with an additional color), the game ends. Upon reaching a certain number of points, the snake's movement speed increases, and 'Anti-Apples' appear on the field, consuming which the snake decreases in size, and you lose some points. Your current score, snake speed, maximum points achieved in the current game session are displayed in the window title. When reaching a certain number of points, the snake changes its color.
 
 ## Controls
 Control of the snake is done using the arrow keys on the keyboard:
