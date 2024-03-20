@@ -15,14 +15,14 @@
     ```bash
     python the_snake.py
 
-##  Правила игры
+##  Правила игры v_1.0
 Змейка состоит из сегментов.
 Змейка движется в одном из четырёх направлений — вверх, вниз, влево или вправо. Игрок управляет направлением движения, но змейка не может остановиться или двигаться назад.
 Каждый раз, когда змейка съедает яблоко, она увеличивается в длину на один сегмент.
 Змейка может проходить сквозь стену и появляться с противоположной стороны поля.
 Если змейка столкнётся сама с собой — игра заканчивается.
 
-##  Правила игры v_1.1
+##  Правила игры v_1.1(main)
 Змейка состоит из сегментов.
 Змейка движется в одном из четырёх направлений — вверх, вниз, влево или вправо. Игрок управляет направлением движения, но змейка не может остановиться или двигаться назад.
 Каждый раз, когда змейка съедает яблоко, она увеличивается в длину на один сегмент.
@@ -60,14 +60,14 @@ The classic computer game "Snake" is one of the most well-known games in the wor
     ```bash
     python the_snake.py
 
-## Game Rules
+## Game Rules v_1.0
 The snake consists of segments.
 The snake moves in one of four directions — up, down, left, or right. The player controls the direction of movement, but the snake cannot stop or move backward.
 Every time the snake eats an apple, it grows in length by one segment.
 The snake can pass through walls and reappear on the opposite side of the field.
 If the snake collides with itself, the game ends.
 
-## Game Rules v_1.1
+## Game Rules v_1.1(main)
 The snake consists of segments.
 The snake moves in one of four directions — up, down, left, or right. The player controls the direction of movement, but the snake cannot stop or move backward.
 Each time the snake eats an apple, it increases in length by one segment.
