@@ -191,30 +191,115 @@ class Snake(GameObject):
             pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
 
 
-def handle_keys(game_object):
+def handle_keys(snake):
     """
     Обрабатывает нажатия клавиш для изменения направления
     движения змейки.
     """
+    # Проверяем события клавиатуры только раз в несколько кадров
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and game_object.direction != DOWN:
-                game_object.next_direction = UP
-            elif event.key == pygame.K_DOWN and game_object.direction != UP:
-                game_object.next_direction = DOWN
-            elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
-                game_object.next_direction = LEFT
-            elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
-                game_object.next_direction = RIGHT
-            elif event.key == pygame.K_ESCAPE:  # Добавляем проверку на
-                pygame.quit()                   # нажатие клавиши Esc.
+            if event.key == pygame.K_UP and snake.direction != DOWN:
+                snake.next_direction = UP
+            elif event.key == pygame.K_DOWN and snake.direction != UP:
+                snake.next_direction = DOWN
+            elif event.key == pygame.K_LEFT and snake.direction != RIGHT:
+                snake.next_direction = LEFT
+            elif event.key == pygame.K_RIGHT and snake.direction != LEFT:
+                snake.next_direction = RIGHT
+            elif event.key == pygame.K_ESCAPE:
+                pygame.quit()
                 raise SystemExit
         elif event.type == pygame.QUIT:
             pygame.quit()
             raise SystemExit
 
 
-def main():  # noqa: C901
+def check_apple(
+        apple, snake, bad_apple,
+        bad_apple_two, bad_apple_three):
+    """Проверка позиции яблока."""
+    if apple.position in snake.position:
+        apple.randomize_position()
+    if apple.position == bad_apple.position:
+        apple.randomize_position()
+    if apple.position == bad_apple_two.position:
+        apple.randomize_position()
+    if apple.position == bad_apple_three.position:
+        apple.randomize_position()
+    return apple.draw()
+
+
+def check_bad_apples(apple, snake, bad_apple, bad_apple_two, bad_apple_three):
+    """Настройка видимости плохих яблок."""
+    # Проверяем где появилось плохое яблоко.
+    if bad_apple.position == apple.position:
+        bad_apple.randomize_position()
+        bad_apple.draw()
+    if snake.length <= 5:
+        bad_apple_two.is_visible = False
+        bad_apple_three.is_visible = False
+    if 10 > snake.length > 5:
+        if bad_apple_two.is_visible is False:
+            bad_apple_two.randomize_position()
+        bad_apple_three.is_visible = False
+        bad_apple_two.draw()
+    elif snake.length >= 10:
+        if bad_apple_three.is_visible is False:
+            bad_apple_three.randomize_position()
+        bad_apple_two.draw()
+        bad_apple_three.draw()
+    if bad_apple.is_visible is False:
+        bad_apple.randomize_position()
+    bad_apple.draw()
+
+
+def check_bad_apples_consume(snake, bad_apple, bad_apple_two, bad_apple_three):
+    """Проверка, съела ли змейка плохое яблоко."""
+    if snake.length == 1:
+        if (snake.get_head_position() == bad_apple.position
+                or snake.get_head_position() == bad_apple_two.position
+                or snake.get_head_position() == bad_apple_three.position):
+            snake.reset()
+    else:
+        if snake.get_head_position() == bad_apple.position:
+            snake.length -= 1
+            snake.update_length()
+            bad_apple.randomize_position()
+        elif snake.get_head_position() == bad_apple_two.position:
+            if bad_apple_two.is_visible is True:
+                snake.length -= 1
+                snake.update_length()
+                bad_apple_two.randomize_position()
+                bad_apple_two.draw()
+        elif snake.get_head_position() == bad_apple_three.position:
+            if bad_apple_three.is_visible is True:
+                snake.length -= 1
+                snake.update_length()
+                bad_apple_three.randomize_position()
+                bad_apple_three.draw()
+
+
+def draw_borders():
+    """Отрисовка границ экрана."""
+    border_thickness = 4
+    # Верхняя граница.
+    pygame.draw.rect(
+        screen, BORDER_COLOR, (0, 0, SCREEN_WIDTH, border_thickness))
+    # Левая граница.
+    pygame.draw.rect(
+        screen, BORDER_COLOR, (0, 0, border_thickness, SCREEN_HEIGHT))
+    # Нижняя граница.
+    pygame.draw.rect(
+        screen, BORDER_COLOR, (0, SCREEN_HEIGHT - border_thickness,
+                               SCREEN_WIDTH, border_thickness))
+    # Правая граница.
+    pygame.draw.rect(
+        screen, BORDER_COLOR, (SCREEN_WIDTH - border_thickness,
+                               0, border_thickness, SCREEN_HEIGHT))
+
+
+def main():
     """Основная функция игры."""
     # Создание экземпляров классов.
     snake, apple, bad_apple, bad_apple_two, bad_apple_three = (
@@ -242,77 +327,13 @@ def main():  # noqa: C901
         # Изменение скорости и прорисовка змейки
         snake.increase_speed()
         snake.draw()
-        """Настройка яблока"""
-        # Проверяем где появилось яблоко
-        if apple.position in snake.position:
-            apple.randomize_position()
-        if apple.position == bad_apple.position:
-            apple.randomize_position()
-        if apple.position == bad_apple_two.position:
-            apple.randomize_position()
-        if apple.position == bad_apple_three.position:
-            apple.randomize_position()
-        apple.draw()
-        """Настройка плохого яблока"""
-        # Проверяем где появилось плохое яблоко.
-        if bad_apple.position == apple.position:
-            bad_apple.randomize_position()
-            bad_apple.draw()
-        if snake.length <= 5:
-            bad_apple_two.is_visible = False
-            bad_apple_three.is_visible = False
-        if 10 > snake.length > 5:
-            if bad_apple_two.is_visible is False:
-                bad_apple_two.randomize_position()
-            bad_apple_three.is_visible = False
-            bad_apple_two.draw()
-        elif snake.length >= 15:
-            if bad_apple_three.is_visible is False:
-                bad_apple_three.randomize_position()
-            bad_apple_two.draw()
-            bad_apple_three.draw()
-        if bad_apple.is_visible is False:
-            bad_apple.randomize_position()
-        bad_apple.draw()
-        # Проверка, съела ли змейка плохое яблоко.
-        if snake.length == 1:
-            if (snake.get_head_position() == bad_apple.position
-                    or snake.get_head_position() == bad_apple_two.position
-                    or snake.get_head_position() == bad_apple_three.position):
-                snake.reset()
-        else:
-            if snake.get_head_position() == bad_apple.position:
-                snake.length -= 1
-                snake.update_length()
-                bad_apple.randomize_position()
-            elif snake.get_head_position() == bad_apple_two.position:
-                if bad_apple_two.is_visible is True:
-                    snake.length -= 1
-                    snake.update_length()
-                    bad_apple_two.randomize_position()
-                    bad_apple_two.draw()
-            elif snake.get_head_position() == bad_apple_three.position:
-                if bad_apple_three.is_visible is True:
-                    snake.length -= 1
-                    snake.update_length()
-                    bad_apple_three.randomize_position()
-                    bad_apple_three.draw()
-        # Отрисовка границ экрана.
-        border_thickness = 4
-        # Верхняя граница.
-        pygame.draw.rect(
-            screen, BORDER_COLOR, (0, 0, SCREEN_WIDTH, border_thickness))
-        # Левая граница.
-        pygame.draw.rect(
-            screen, BORDER_COLOR, (0, 0, border_thickness, SCREEN_HEIGHT))
-        # Нижняя граница.
-        pygame.draw.rect(
-            screen, BORDER_COLOR, (0, SCREEN_HEIGHT - border_thickness,
-                                   SCREEN_WIDTH, border_thickness))
-        # Правая граница.
-        pygame.draw.rect(
-            screen, BORDER_COLOR, (SCREEN_WIDTH - border_thickness,
-                                   0, border_thickness, SCREEN_HEIGHT))
+
+        check_apple(apple, snake, bad_apple, bad_apple_two, bad_apple_three)
+        check_bad_apples(apple, snake, bad_apple,
+                         bad_apple_two, bad_apple_three)
+        check_bad_apples_consume(snake, bad_apple, bad_apple_two,
+                                 bad_apple_three)
+        draw_borders()
         pygame.display.update()
         # Индикация счёта, рейтинга и скорости в заголовке окна.
         if snake.length > highest_score:
