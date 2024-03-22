@@ -1,4 +1,4 @@
-from random import choice, randint
+from random import choice
 import pygame
 
 # Инициализация PyGame:
@@ -23,6 +23,8 @@ BOARD_BACKGROUND_COLOR = (0, 0, 0)
 COLOR_RED = (255, 0, 0)
 # Стартовый цвет змейки
 SNAKE_COLOR = (153, 153, 0)
+# Константа для граничного значения длины змейки для выбора цвета
+LENGTH_THRESHOLD = 5
 # Словарь цветов змейки в зависимости от очков
 SNAKE_COLOR_DICT = {5: (204, 204, 0),
                     10: (255, 255, 0),
@@ -44,17 +46,22 @@ clock = pygame.time.Clock()
 class GameObject:
     """Основной класс для представления игровых объектов"""
 
-    def __init__(self, position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)):
+    def __init__(self, position=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2),
+                 color=None):
         self.position = position
-        self.body_color = None
+        self.body_color = color
 
     def draw(self):
         """Отрисовывает игровой объект."""
-        raise NotImplementedError
+        raise NotImplementedError('Метод draw() должен быть переопределен в'
+                                  + 'дочерних классах. Класс: {}, Метод: {}'
+                                  .format(self.__class__.__name__, "draw"))
 
     def rect(self, position):
-        """Отрисовывает ячейки"""
+        """Отрисовывает ячейки и их границы"""
         rect = pygame.Rect(position, (GRID_SIZE, GRID_SIZE))
+        # Отрисовка границы ячейки
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
         return rect
 
 
@@ -62,20 +69,30 @@ class Apple(GameObject):
     """Класс для представления яблока на игровом поле."""
 
     def __init__(self):
-        super().__init__()
-        self.body_color = COLOR_RED
+        super().__init__(color=COLOR_RED)
 
     def randomize_position(self, snake):
         """Устанавливает случайное положение яблока на игровом поле."""
-        while True:
-            self.position = (randint(0, GRID_WIDTH - 1) * GRID_SIZE,
-                             randint(0, GRID_HEIGHT - 1) * GRID_SIZE)
-            if self.position not in snake.positions:
-                break
+        available_positions = [(x, y) for x in range(GRID_WIDTH) for y in
+                               range(GRID_HEIGHT) if (x, y) not in
+                               snake.positions]
+        if not available_positions:
+            # Если нет доступных позиций, предпринимаем действия
+            self.handle_no_available_positions()
+            return
+        x, y = choice(available_positions)
+        self.position = (x * GRID_SIZE, y * GRID_SIZE)
+
+    def handle_no_available_positions(self):
+        """Завершаем игру, если закончились клеточки на поле."""
+        print('Вы победили! Вы заняли все ячейки!')
+        pygame.quit()
+        raise SystemExit
 
     def draw(self):
         """Отрисовывает яблоко на игровой поверхности."""
-        rect = super().rect(self.position)
+        # Используем метод rect из родительского класса
+        rect = self.rect(self.position)
         pygame.draw.rect(screen, self.body_color, rect)
         pygame.draw.rect(screen, self.body_color, rect, 1)
 
@@ -83,14 +100,10 @@ class Apple(GameObject):
 class Snake(GameObject):
     """Класс для представления змейки на игровом поле."""
 
-    def __init__(self):
-        super().__init__()
-        self.length = 1
-        self.positions = [self.position]
+    def __init__(self,):
+        super().__init__(color=SNAKE_COLOR)
+        self.reset()
         self.direction = RIGHT
-        self.body_color = SNAKE_COLOR
-        self.speed = 5
-        self.tail = None
 
     def update_direction(self, new_direction):
         """Обновляет направление движения змейки."""
@@ -114,31 +127,36 @@ class Snake(GameObject):
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])
         self.speed = 5
+        self.tail = None
 
     def get_head_position(self):
         """Возвращает позицию головы змейки."""
         return self.positions[0]
 
+    def get_snake_color(self):
+        """Возвращает цвет змейки в зависимости от её длины."""
+        return (self.body_color if self.length < LENGTH_THRESHOLD
+                else SNAKE_COLOR_DICT[(self.length // 5) * 5])
+
     def draw(self):
         """Отрисовывает змейку на игровой поверхности."""
-        new_head_rect = super().rect(self.get_head_position())
-        color = self.body_color if self.length < 5 else SNAKE_COLOR_DICT[(
-            self.length // 5) * 5]  # Получаем нужный цвет из словаря
+        new_head_rect = self.rect(self.get_head_position())
+        # Используем метод для получения цвета
+        color = self.get_snake_color()
         pygame.draw.rect(screen, color, new_head_rect)
         pygame.draw.rect(screen, BORDER_COLOR, new_head_rect, 1)
         # Удаляем последний сегмент только если змейка не съела яблоко
-        if len(self.positions) > self.length:
-            self.tail = self.positions.pop()
-        else:
-            self.tail = None
+        self.tail = (
+            self.positions.pop() if len(self.positions) > self.length else None
+        )
         # Проверяем, есть ли след для стирания и отрисовываем его
         if self.tail:
-            rect = super().rect(self.tail)
+            rect = self.rect(self.tail)
             pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
 
     def increase_speed(self):
         """Увеличивает скорость змейки когда её длина больше 5."""
-        if self.length // 2 > 5:
+        if self.length // 2 > LENGTH_THRESHOLD:
             self.speed = self.length // 2
 
 
